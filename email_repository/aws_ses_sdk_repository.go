@@ -21,13 +21,13 @@ type AWS_SES_SDKEMailServices struct {
 
 func (p *AWS_SES_SDKEMailServices) InitializeEMailService(props utils.Map) error {
 
-	if _, dataOk := props[email_common.EMAIL_AWS_SES_SDK_REGION]; !dataOk {
+	if dataVal, dataOk := props[email_common.EMAIL_AWS_SES_SDK_REGION]; !dataOk || len(dataVal.(string)) == 0 {
 		err := &utils.AppError{ErrorStatus: 400, ErrorMsg: "Bad Request", ErrorDetail: "Parameter Region is not received"}
 		return err
-	} else if _, dataOk := props[email_common.EMAIL_AWS_SES_SDK_ACCESSKEY]; !dataOk {
+	} else if dataVal, dataOk := props[email_common.EMAIL_AWS_SES_SDK_ACCESSKEY]; !dataOk || len(dataVal.(string)) == 0 {
 		err := &utils.AppError{ErrorStatus: 400, ErrorMsg: "Bad Request", ErrorDetail: "Parameter AccessKey is not received"}
 		return err
-	} else if _, dataOk := props[email_common.EMAIL_AWS_SES_SDK_SECRETKEY]; !dataOk {
+	} else if dataVal, dataOk := props[email_common.EMAIL_AWS_SES_SDK_SECRETKEY]; !dataOk || len(dataVal.(string)) == 0 {
 		err := &utils.AppError{ErrorStatus: 400, ErrorMsg: "Bad Request", ErrorDetail: "Parameter SecretKey is not received"}
 		return err
 	}
@@ -131,16 +131,16 @@ func (p *AWS_SES_SDKEMailServices) SendEMail(props utils.Map) error {
 }
 
 func (p *AWS_SES_SDKEMailServices) validateSendEMailParams(props utils.Map) error {
-	if _, dataOk := props[email_common.EMAIL_SENDER]; !dataOk {
+	if dataVal, dataOk := props[email_common.EMAIL_SENDER]; !dataOk || len(dataVal.(string)) == 0 {
 		err := &utils.AppError{ErrorStatus: 400, ErrorMsg: "Bad Request", ErrorDetail: "Parameter Sender is not received"}
 		return err
-	} else if _, dataOk := props[email_common.EMAIL_RECIPIENT]; !dataOk {
+	} else if dataVal, dataOk := props[email_common.EMAIL_RECIPIENT]; !dataOk || len(dataVal.(string)) == 0 {
 		err := &utils.AppError{ErrorStatus: 400, ErrorMsg: "Bad Request", ErrorDetail: "Parameter Receiver is not received"}
 		return err
-	} else if _, dataOk := props[email_common.EMAIL_SUBJECT]; !dataOk {
+	} else if dataVal, dataOk := props[email_common.EMAIL_SUBJECT]; !dataOk || len(dataVal.(string)) == 0 {
 		err := &utils.AppError{ErrorStatus: 400, ErrorMsg: "Bad Request", ErrorDetail: "Parameter Subject is not received"}
 		return err
-	} else if _, dataOk := props[email_common.EMAIL_BODY]; !dataOk {
+	} else if dataVal, dataOk := props[email_common.EMAIL_BODY]; !dataOk || len(dataVal.(string)) == 0 {
 		err := &utils.AppError{ErrorStatus: 400, ErrorMsg: "Bad Request", ErrorDetail: "Parameter Body is not received"}
 		return err
 	}
