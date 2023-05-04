@@ -135,7 +135,7 @@ func (p *AWS_SES_SDKEMailServices) validateSendEMailParams(props utils.Map) erro
 		err := &utils.AppError{ErrorStatus: 400, ErrorMsg: "Bad Request", ErrorDetail: "Parameter Sender is not received"}
 		return err
 	} else if dataVal, dataOk := props[email_common.EMAIL_RECIPIENT]; !dataOk || len(dataVal.(string)) == 0 {
-		err := &utils.AppError{ErrorStatus: 400, ErrorMsg: "Bad Request", ErrorDetail: "Parameter Receiver is not received"}
+		err := &utils.AppError{ErrorStatus: 400, ErrorMsg: "Bad Request", ErrorDetail: "Parameter Recipient is not received"}
 		return err
 	} else if dataVal, dataOk := props[email_common.EMAIL_SUBJECT]; !dataOk || len(dataVal.(string)) == 0 {
 		err := &utils.AppError{ErrorStatus: 400, ErrorMsg: "Bad Request", ErrorDetail: "Parameter Subject is not received"}
