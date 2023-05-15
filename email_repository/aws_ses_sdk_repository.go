@@ -105,6 +105,7 @@ func (p *AWS_SES_SDKEMailServices) SendEMail(props utils.Map) error {
 	fmt.Println("Error :", err)
 	if err != nil {
 		if aerr, ok := err.(awserr.Error); ok {
+
 			switch aerr.Code() {
 			case ses.ErrCodeMessageRejected:
 				fmt.Println(ses.ErrCodeMessageRejected, aerr.Error())
@@ -115,13 +116,21 @@ func (p *AWS_SES_SDKEMailServices) SendEMail(props utils.Map) error {
 			default:
 				fmt.Println(aerr.Error())
 			}
+
+			err := &utils.AppError{
+				ErrorCode: aerr.Code(),
+				ErrorMsg:  aerr.Error(),
+			}
+			return err
 		} else {
 			// Print the error, cast err to awserr.Error to get the Code and
 			// Message from an error.
 			fmt.Println(err.Error())
+			err := &utils.AppError{
+				ErrorMsg: err.Error(),
+			}
+			return err
 		}
-
-		return err
 	}
 
 	fmt.Println("Email Sent to address: " + strRecipient)
