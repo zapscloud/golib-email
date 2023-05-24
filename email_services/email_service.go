@@ -9,7 +9,7 @@ import (
 // EMailService - Email Service
 type EMailService interface {
 	InitializeEMailService(props utils.Map) error
-	SendEMail(props utils.Map) error
+	SendEMail(strSender string, strRecipient string, strSubject string, strBody string) error
 }
 
 // NewEMailService - Contruct EMail Service

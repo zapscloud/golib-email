@@ -21,32 +21,29 @@ type AWS_SES_SDKEMailServices struct {
 
 func (p *AWS_SES_SDKEMailServices) InitializeEMailService(props utils.Map) error {
 
+	var err error = nil
+
 	if dataVal, dataOk := props[email_common.EMAIL_AWS_SES_SDK_REGION]; !dataOk || len(dataVal.(string)) == 0 {
-		err := &utils.AppError{ErrorStatus: 400, ErrorMsg: "Bad Request", ErrorDetail: "Parameter Region is not received"}
-		return err
+		err = &utils.AppError{ErrorStatus: 400, ErrorMsg: "Bad Request", ErrorDetail: "Parameter Region is not received"}
 	} else if dataVal, dataOk := props[email_common.EMAIL_AWS_SES_SDK_ACCESSKEY]; !dataOk || len(dataVal.(string)) == 0 {
-		err := &utils.AppError{ErrorStatus: 400, ErrorMsg: "Bad Request", ErrorDetail: "Parameter AccessKey is not received"}
-		return err
+		err = &utils.AppError{ErrorStatus: 400, ErrorMsg: "Bad Request", ErrorDetail: "Parameter AccessKey is not received"}
 	} else if dataVal, dataOk := props[email_common.EMAIL_AWS_SES_SDK_SECRETKEY]; !dataOk || len(dataVal.(string)) == 0 {
-		err := &utils.AppError{ErrorStatus: 400, ErrorMsg: "Bad Request", ErrorDetail: "Parameter SecretKey is not received"}
-		return err
+		err = &utils.AppError{ErrorStatus: 400, ErrorMsg: "Bad Request", ErrorDetail: "Parameter SecretKey is not received"}
 	}
 
-	// Store the Parameter to member variable
-	p.awsSESSdkRegion = props[email_common.EMAIL_AWS_SES_SDK_REGION].(string)
-	p.awsSESSdkAccessKey = props[email_common.EMAIL_AWS_SES_SDK_ACCESSKEY].(string)
-	p.awsSESSdkSecretKey = props[email_common.EMAIL_AWS_SES_SDK_SECRETKEY].(string)
+	if err == nil {
+		// Store the Parameter to member variable
+		p.awsSESSdkRegion = props[email_common.EMAIL_AWS_SES_SDK_REGION].(string)
+		p.awsSESSdkAccessKey = props[email_common.EMAIL_AWS_SES_SDK_ACCESSKEY].(string)
+		p.awsSESSdkSecretKey = props[email_common.EMAIL_AWS_SES_SDK_SECRETKEY].(string)
 
-	//log.Println("At Initialise:", p.awsSESSdkRegion, p.awsSESSdkAccessKey, p.awsSESSdkSecretKey)
+		//log.Println("At Initialise:", p.awsSESSdkRegion, p.awsSESSdkAccessKey, p.awsSESSdkSecretKey)
+	}
 
-	return nil
+	return err
 }
 
-func (p *AWS_SES_SDKEMailServices) SendEMail(props utils.Map) error {
-	err := p.validateSendEMailParams(props)
-	if err != nil {
-		return err
-	}
+func (p *AWS_SES_SDKEMailServices) SendEMail(strSender string, strRecipient string, strSubject string, strBody string) error {
 
 	//log.Println("SendMail:", p.awsSESSdkRegion, p.awsSESSdkAccessKey, p.awsSESSdkSecretKey)
 
@@ -59,12 +56,6 @@ func (p *AWS_SES_SDKEMailServices) SendEMail(props utils.Map) error {
 
 	// The character encoding for the email.
 	CharSet := "UTF-8"
-
-	// Parse the Parameters
-	strSender := props[email_common.EMAIL_SENDER].(string)
-	strRecipient := props[email_common.EMAIL_RECIPIENT].(string)
-	strSubject := props[email_common.EMAIL_SUBJECT].(string)
-	strBody := props[email_common.EMAIL_BODY].(string)
 
 	// Create an SES Service.
 	svc := ses.New(sess)
@@ -135,24 +126,6 @@ func (p *AWS_SES_SDKEMailServices) SendEMail(props utils.Map) error {
 
 	fmt.Println("Email Sent to address: " + strRecipient)
 	fmt.Println(result)
-
-	return nil
-}
-
-func (p *AWS_SES_SDKEMailServices) validateSendEMailParams(props utils.Map) error {
-	if dataVal, dataOk := props[email_common.EMAIL_SENDER]; !dataOk || len(dataVal.(string)) == 0 {
-		err := &utils.AppError{ErrorStatus: 400, ErrorMsg: "Bad Request", ErrorDetail: "Parameter Sender is not received"}
-		return err
-	} else if dataVal, dataOk := props[email_common.EMAIL_RECIPIENT]; !dataOk || len(dataVal.(string)) == 0 {
-		err := &utils.AppError{ErrorStatus: 400, ErrorMsg: "Bad Request", ErrorDetail: "Parameter Recipient is not received"}
-		return err
-	} else if dataVal, dataOk := props[email_common.EMAIL_SUBJECT]; !dataOk || len(dataVal.(string)) == 0 {
-		err := &utils.AppError{ErrorStatus: 400, ErrorMsg: "Bad Request", ErrorDetail: "Parameter Subject is not received"}
-		return err
-	} else if dataVal, dataOk := props[email_common.EMAIL_BODY]; !dataOk || len(dataVal.(string)) == 0 {
-		err := &utils.AppError{ErrorStatus: 400, ErrorMsg: "Bad Request", ErrorDetail: "Parameter Body is not received"}
-		return err
-	}
 
 	return nil
 }

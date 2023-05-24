@@ -21,11 +21,6 @@ const (
 	EMAIL_AWS_SES_SDK_REGION    = "aws_ses_sdk_region"
 	EMAIL_AWS_SES_SDK_ACCESSKEY = "aws_ses_sdk_accesskey"
 	EMAIL_AWS_SES_SDK_SECRETKEY = "aws_ses_sdk_secretkey"
-
-	EMAIL_SENDER    = "sender"
-	EMAIL_RECIPIENT = "recipient"
-	EMAIL_SUBJECT   = "subject"
-	EMAIL_BODY      = "body"
 )
 
 func GetEMailType(props utils.Map) (EMailType, error) {
