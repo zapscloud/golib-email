@@ -18,7 +18,7 @@ type EMailService struct {
 
 // reposEMailService - Email Service Repositories Interface
 type reposEMailService interface {
-	InitializeEMailService(props utils.Map) error
+	InitializeService(props utils.Map) error
 	SendEMail(strSender string, strRecipient string, strSubject string, strBody string) error
 }
 
@@ -56,7 +56,7 @@ func NewStorageService(props utils.Map) (EMailService, error) {
 
 	if emailService.emailClient != nil {
 		// Initialize the Dao
-		err = emailService.initializeEMailService(props)
+		err = emailService.initialize(props)
 		if err != nil {
 			return emailService, err
 		}
@@ -65,13 +65,13 @@ func NewStorageService(props utils.Map) (EMailService, error) {
 	return emailService, nil
 }
 
-func (p *EMailService) initializeEMailService(props utils.Map) error {
+func (p *EMailService) initialize(props utils.Map) error {
 	var err error = nil
 
 	if p.emailClient == nil {
 		err = &utils.AppError{ErrorStatus: 412, ErrorMsg: "Initialize Error", ErrorDetail: "EMail Service is not created"}
 	} else {
-		err = p.emailClient.InitializeEMailService(props)
+		err = p.emailClient.InitializeService(props)
 	}
 
 	return err

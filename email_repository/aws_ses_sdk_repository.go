@@ -19,7 +19,7 @@ type AWS_SES_SDKEMailServices struct {
 	awsSESSdkSecretKey string
 }
 
-func (p *AWS_SES_SDKEMailServices) InitializeEMailService(props utils.Map) error {
+func (p *AWS_SES_SDKEMailServices) InitializeService(props utils.Map) error {
 
 	var err error = nil
 
