@@ -99,7 +99,13 @@ func (p *EMailService) SendEMailWithTemplate(
 
 	log.Println("SendEMailWithTemplate Enter=> ", strSender, strRecipient, strSubject, templateFileName, path.Base(templateFileName))
 
-	funcMap := template.FuncMap{"add": func(a, b int) int { return a + b }}
+	// Add function maps to the Template
+	funcMap := template.FuncMap{
+		"add": func(a, b int) int { return a + b },
+		"sub": func(a, b int) int { return a - b },
+		"mul": func(a, b int) int { return a * b },
+		"div": func(a, b int) float32 { return float32(a) / float32(b) },
+	}
 
 	t, err := template.New(path.Base(templateFileName)).Funcs(funcMap).ParseFiles(templateFileName)
 	if err != nil {
