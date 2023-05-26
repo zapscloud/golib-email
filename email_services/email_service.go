@@ -1,51 +1,122 @@
 package email_services
 
 import (
+	"bytes"
+	"html/template"
+	"log"
+	"path"
+
 	"github.com/zapscloud/golib-email/email_common"
 	"github.com/zapscloud/golib-email/email_repository"
 	"github.com/zapscloud/golib-utils/utils"
 )
 
 // EMailService - Email Service
-type EMailService interface {
+type EMailService struct {
+	emailClient reposEMailService
+}
+
+// reposEMailService - Email Service Repositories Interface
+type reposEMailService interface {
 	InitializeEMailService(props utils.Map) error
 	SendEMail(strSender string, strRecipient string, strSubject string, strBody string) error
 }
 
 // NewEMailService - Contruct EMail Service
 func NewStorageService(props utils.Map) (EMailService, error) {
-	var emailClient EMailService = nil
+
+	// Instantiate the EMail Service
+	emailService := EMailService{
+		emailClient: nil,
+	}
 
 	// Get StorageType from the Parameter
 	storageType, err := email_common.GetEMailType(props)
 	if err != nil {
-		return nil, err
+		return emailService, err
 	}
 
 	// Get the Storage's Object based on StorageType
 	switch storageType {
 	case email_common.EMAIL_TYPE_AWS_SES_SDK:
-		emailClient = &email_repository.AWS_SES_SDKEMailServices{}
+		emailService.emailClient = &email_repository.AWS_SES_SDKEMailServices{}
 
 	case email_common.EMAIL_TYPE_AWS_SES_SMTP:
-		emailClient = &email_repository.AWS_SES_SDKEMailServices{}
+		// *Not Implemented yet*
+		emailService.emailClient = nil
 
 	case email_common.EMAIL_TYPE_MS_AZURE:
 		// *Not Implemented yet*
-		emailClient = nil
+		emailService.emailClient = nil
 
 	case email_common.EMAIL_TYPE_GOOGLE:
 		// *Not Implemented yet*
-		emailClient = nil
+		emailService.emailClient = nil
 	}
 
-	if emailClient != nil {
+	if emailService.emailClient != nil {
 		// Initialize the Dao
-		err = emailClient.InitializeEMailService(props)
+		err = emailService.initializeEMailService(props)
 		if err != nil {
-			return nil, err
+			return emailService, err
 		}
 	}
 
-	return emailClient, nil
+	return emailService, nil
+}
+
+func (p *EMailService) initializeEMailService(props utils.Map) error {
+	var err error = nil
+
+	if p.emailClient == nil {
+		err = &utils.AppError{ErrorStatus: 412, ErrorMsg: "Initialize Error", ErrorDetail: "EMail Service is not created"}
+	} else {
+		err = p.emailClient.InitializeEMailService(props)
+	}
+
+	return err
+}
+
+func (p *EMailService) SendEMail(strSender string, strRecipient string, strSubject string, strBody string) error {
+
+	var err error = nil
+
+	if p.emailClient == nil {
+		err = &utils.AppError{ErrorStatus: 412, ErrorMsg: "Initialize Error", ErrorDetail: "EMail Service is not created"}
+	} else {
+		err = p.emailClient.SendEMail(strSender, strRecipient, strSubject, strBody)
+	}
+
+	return err
+}
+
+func (p *EMailService) SendEMailWithTemplate(
+	strSender string,
+	strRecipient string,
+	strSubject string,
+	templateFileName string,
+	templateData utils.Map) error {
+
+	log.Println("SendEMailWithTemplate Enter=> ", strSender, strRecipient, strSubject, templateFileName, path.Base(templateFileName))
+
+	funcMap := template.FuncMap{"add": func(a, b int) int { return a + b }}
+
+	t, err := template.New(path.Base(templateFileName)).Funcs(funcMap).ParseFiles(templateFileName)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	log.Println("SendEMailWithTemplate ParseFiles Success")
+
+	buf := new(bytes.Buffer)
+	if err = t.Execute(buf, templateData); err != nil {
+		log.Println(err)
+		return err
+	}
+	log.Println("SendEMailWithTemplate Execute Success")
+
+	htmlBody := buf.String()
+
+	return p.SendEMail(strSender, strRecipient, strSubject, htmlBody)
 }
