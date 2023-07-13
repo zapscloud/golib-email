@@ -23,21 +23,21 @@ type reposEMailService interface {
 }
 
 // NewEMailService - Contruct EMail Service
-func NewStorageService(props utils.Map) (EMailService, error) {
+func NewEMailService(props utils.Map) (EMailService, error) {
 
 	// Instantiate the EMail Service
 	emailService := EMailService{
 		emailClient: nil,
 	}
 
-	// Get StorageType from the Parameter
-	storageType, err := email_common.GetEMailType(props)
+	// Get EMailType from the Parameter
+	emailType, err := email_common.GetEMailType(props)
 	if err != nil {
 		return emailService, err
 	}
 
-	// Get the Storage's Object based on StorageType
-	switch storageType {
+	// Get the EMail's Object based on EMailType
+	switch emailType {
 	case email_common.EMAIL_TYPE_AWS_SES_SDK:
 		emailService.emailClient = &email_repository.AWS_SES_SDKEMailServices{}
 

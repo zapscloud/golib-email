@@ -12,19 +12,19 @@ import (
 func main() {
 	emailConf := getAWSSESSDKConfig()
 
-	svcEmail, err := email_services.NewStorageService(emailConf)
+	svcEmail, err := email_services.NewEMailService(emailConf)
 	if err != nil {
 		log.Println("Error: ", err)
 		return
 	}
 
-	emailData := utils.Map{
-		email_common.EMAIL_SENDER:    "no-reply@test.com",
-		email_common.EMAIL_RECIPIENT: "abc@xyz.com",
-		email_common.EMAIL_SUBJECT:   "This is test Email",
-		email_common.EMAIL_BODY:      "This is Test mail body",
-	}
-	svcEmail.SendEMail(emailData)
+	// Parse the Parameters
+	strSender := "no-reply@test.com"
+	strRecipient := "abc@xyz.com"
+	strSubject := "This is test Email"
+	strBody := "This is Test mail body"
+
+	svcEmail.SendEMail(strSender, strRecipient, strSubject, strBody)
 
 }
 
