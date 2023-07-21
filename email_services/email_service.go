@@ -113,6 +113,33 @@ func (p *EMailService) SendEMailWithTemplate(
 
 	log.Println("SendEMailWithTemplate Enter=> ", strSender, strRecipient, strSubject, templateFileName, path.Base(templateFileName))
 
+	htmlBody, err := p.convertTemplateToHTML(templateFileName, templateData)
+	if err != nil {
+		return err
+	}
+
+	return p.SendEMail(strSender, strRecipient, strSubject, htmlBody)
+}
+
+func (p *EMailService) SendEMail2WithTemplate(
+	strSender string,
+	arrToAddresses []string,
+	arrCCAddresses []string,
+	strSubject string,
+	templateFileName string,
+	templateData utils.Map) error {
+
+	log.Println("SendEMailWithTemplate Enter=> ", strSender, arrToAddresses, arrCCAddresses, strSubject, templateFileName, path.Base(templateFileName))
+
+	htmlBody, err := p.convertTemplateToHTML(templateFileName, templateData)
+	if err != nil {
+		return err
+	}
+
+	return p.emailClient.SendEMail2(strSender, arrToAddresses, arrCCAddresses, strSubject, htmlBody)
+}
+
+func (p *EMailService) convertTemplateToHTML(templateFileName string, templateData utils.Map) (string, error) {
 	// Add function maps to the Template
 	funcMap := template.FuncMap{
 		"add": func(a, b int) int { return a + b },
@@ -124,7 +151,7 @@ func (p *EMailService) SendEMailWithTemplate(
 	t, err := template.New(path.Base(templateFileName)).Funcs(funcMap).ParseFiles(templateFileName)
 	if err != nil {
 		log.Println(err)
-		return err
+		return "", err
 	}
 
 	log.Println("SendEMailWithTemplate ParseFiles Success")
@@ -132,11 +159,11 @@ func (p *EMailService) SendEMailWithTemplate(
 	buf := new(bytes.Buffer)
 	if err = t.Execute(buf, templateData); err != nil {
 		log.Println(err)
-		return err
+		return "", err
 	}
 	log.Println("SendEMailWithTemplate Execute Success")
 
 	htmlBody := buf.String()
 
-	return p.SendEMail(strSender, strRecipient, strSubject, htmlBody)
+	return htmlBody, nil
 }
