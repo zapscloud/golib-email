@@ -43,9 +43,40 @@ func (p *AWS_SES_SDKEMailServices) InitializeService(props utils.Map) error {
 	return err
 }
 
+// Send EMail to Single Recipient
 func (p *AWS_SES_SDKEMailServices) SendEMail(strSender string, strRecipient string, strSubject string, strBody string) error {
 
-	//log.Println("SendMail:", p.awsSESSdkRegion, p.awsSESSdkAccessKey, p.awsSESSdkSecretKey)
+	// Convert strReceipt as Array
+	toAddresses := []*string{
+		aws.String(strRecipient)}
+
+	// Empty CCAdddress
+	ccAddress := []*string{}
+
+	return p.sendEMail(strSender, toAddresses, ccAddress, strSubject, strBody)
+
+}
+
+// Send Email to Multiple Recipient
+func (p *AWS_SES_SDKEMailServices) SendEMail2(strSender string, arrRecipients []string, arrCCAddresses []string, strSubject string, strBody string) error {
+
+	// Create the list of ToAddresses
+	var toAddresses []*string
+	for _, recipient := range arrRecipients {
+		toAddresses = append(toAddresses, aws.String(recipient))
+	}
+
+	// Create the list of CCAddresses
+	var ccAddresses []*string
+	for _, cc := range arrCCAddresses {
+		ccAddresses = append(ccAddresses, aws.String(cc))
+	}
+
+	return p.sendEMail(strSender, toAddresses, ccAddresses, strSubject, strBody)
+
+}
+
+func (p *AWS_SES_SDKEMailServices) sendEMail(strSender string, toAddresses []*string, ccAddresses []*string, strSubject string, strBody string) error {
 
 	// Create new Session
 	sess, _ := session.NewSession(
@@ -63,10 +94,8 @@ func (p *AWS_SES_SDKEMailServices) SendEMail(strSender string, strRecipient stri
 	// Assemble the email.
 	input := &ses.SendEmailInput{
 		Destination: &ses.Destination{
-			CcAddresses: []*string{},
-			ToAddresses: []*string{
-				aws.String(strRecipient),
-			},
+			CcAddresses: ccAddresses,
+			ToAddresses: toAddresses,
 		},
 		Message: &ses.Message{
 			Body: &ses.Body{
@@ -124,7 +153,7 @@ func (p *AWS_SES_SDKEMailServices) SendEMail(strSender string, strRecipient stri
 		}
 	}
 
-	fmt.Println("Email Sent to address: " + strRecipient)
+	fmt.Println("Email Sent")
 	fmt.Println(result)
 
 	return nil

@@ -19,12 +19,21 @@ func main() {
 	}
 
 	// Parse the Parameters
-	strSender := "no-reply@test.com"
+	strSender := "no-reply@abc.com"
 	strRecipient := "abc@xyz.com"
+	arrToAddresses := []string{"abc@xyz.com", "abc1@xyz.com"}
+	arrCCAddresses := []string{}
 	strSubject := "This is test Email"
 	strBody := "This is Test mail body"
 
-	svcEmail.SendEMail(strSender, strRecipient, strSubject, strBody)
+	log.Println("Recipient EMail ", strRecipient)
+	log.Println("List of ToAddresses and CCAddresses ", arrToAddresses, arrCCAddresses)
+
+	// Send to single EMail
+	//svcEmail.SendEMail(strSender, strRecipient, strSubject, strBody)
+
+	// Send to multiple EMail
+	svcEmail.SendEMail2(strSender, arrToAddresses, arrCCAddresses, strSubject, strBody)
 
 }
 

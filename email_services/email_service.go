@@ -20,6 +20,7 @@ type EMailService struct {
 type reposEMailService interface {
 	InitializeService(props utils.Map) error
 	SendEMail(strSender string, strRecipient string, strSubject string, strBody string) error
+	SendEMail2(strSender string, arrRecipient []string, arrCCAddresses []string, strSubject string, strBody string) error
 }
 
 // NewEMailService - Contruct EMail Service
@@ -85,6 +86,19 @@ func (p *EMailService) SendEMail(strSender string, strRecipient string, strSubje
 		err = &utils.AppError{ErrorStatus: 412, ErrorMsg: "Initialize Error", ErrorDetail: "EMail Service is not created"}
 	} else {
 		err = p.emailClient.SendEMail(strSender, strRecipient, strSubject, strBody)
+	}
+
+	return err
+}
+
+func (p *EMailService) SendEMail2(strSender string, strRecipient []string, strCCAddresses []string, strSubject string, strBody string) error {
+
+	var err error = nil
+
+	if p.emailClient == nil {
+		err = &utils.AppError{ErrorStatus: 412, ErrorMsg: "Initialize Error", ErrorDetail: "EMail Service is not created"}
+	} else {
+		err = p.emailClient.SendEMail2(strSender, strRecipient, strCCAddresses, strSubject, strBody)
 	}
 
 	return err
