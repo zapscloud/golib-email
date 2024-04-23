@@ -129,14 +129,14 @@ func (p *EMailService) SendEMail2WithTemplate(
 	templateFileName string,
 	templateData utils.Map) error {
 
-	log.Println("SendEMailWithTemplate Enter=> ", strSender, arrToAddresses, arrCCAddresses, strSubject, templateFileName, path.Base(templateFileName))
+	log.Println("SendEMail2WithTemplate Enter=> ", strSender, arrToAddresses, arrCCAddresses, strSubject, templateFileName, path.Base(templateFileName))
 
 	htmlBody, err := p.convertTemplateToHTML(templateFileName, templateData)
 	if err != nil {
 		return err
 	}
 
-	return p.emailClient.SendEMail2(strSender, arrToAddresses, arrCCAddresses, strSubject, htmlBody)
+	return p.SendEMail2(strSender, arrToAddresses, arrCCAddresses, strSubject, htmlBody)
 }
 
 func (p *EMailService) convertTemplateToHTML(templateFileName string, templateData utils.Map) (string, error) {
@@ -164,7 +164,7 @@ func (p *EMailService) convertTemplateToHTML(templateFileName string, templateDa
 
 	htmlBody := buf.String()
 
-	log.Println("convertTemplateToHTML Execute Success", htmlBody)
+	log.Println("convertTemplateToHTML Execute Success")
 
 	return htmlBody, nil
 }

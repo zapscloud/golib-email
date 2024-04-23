@@ -78,7 +78,7 @@ func (p *AWS_SES_SDKEMailServices) SendEMail2(strSender string, arrRecipients []
 
 func (p *AWS_SES_SDKEMailServices) sendEMail(strSender string, toAddresses []*string, ccAddresses []*string, strSubject string, strBody string) error {
 
-	log.Println("SDKEMailServices.sendEMail Enter:", strSender, toAddresses, ccAddresses, strSubject, strBody)
+	log.Println("SDKEMailServices.sendEMail Enter:", strSender, toAddresses, ccAddresses, strSubject)
 
 	// Create new Session
 	sess, _ := session.NewSession(
@@ -120,7 +120,7 @@ func (p *AWS_SES_SDKEMailServices) sendEMail(strSender string, toAddresses []*st
 		//ConfigurationSetName: aws.String(ConfigurationSet),
 	}
 
-	log.Println("SDKEMailServices.sendEMail Before SendEmail:", input)
+	log.Println("SDKEMailServices.sendEMail Before SendEmail:")
 
 	// Attempt to send the email.
 	result, err := svc.SendEmail(input)
