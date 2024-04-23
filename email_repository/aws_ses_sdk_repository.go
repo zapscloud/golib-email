@@ -1,7 +1,7 @@
 package email_repository
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
@@ -78,6 +78,8 @@ func (p *AWS_SES_SDKEMailServices) SendEMail2(strSender string, arrRecipients []
 
 func (p *AWS_SES_SDKEMailServices) sendEMail(strSender string, toAddresses []*string, ccAddresses []*string, strSubject string, strBody string) error {
 
+	log.Println("SDKEMailServices.sendEMail Enter:", strSender, toAddresses, ccAddresses, strSubject, strBody)
+
 	// Create new Session
 	sess, _ := session.NewSession(
 		&aws.Config{
@@ -118,23 +120,25 @@ func (p *AWS_SES_SDKEMailServices) sendEMail(strSender string, toAddresses []*st
 		//ConfigurationSetName: aws.String(ConfigurationSet),
 	}
 
+	log.Println("SDKEMailServices.sendEMail Before SendEmail:", input)
+
 	// Attempt to send the email.
 	result, err := svc.SendEmail(input)
 
 	// Display error messages if they occur.
-	fmt.Println("Error :", err)
+	log.Println("SDKEMailServices.sendEMail, After SendEmail:", err)
 	if err != nil {
 		if aerr, ok := err.(awserr.Error); ok {
 
 			switch aerr.Code() {
 			case ses.ErrCodeMessageRejected:
-				fmt.Println(ses.ErrCodeMessageRejected, aerr.Error())
+				log.Println(ses.ErrCodeMessageRejected, aerr.Error())
 			case ses.ErrCodeMailFromDomainNotVerifiedException:
-				fmt.Println(ses.ErrCodeMailFromDomainNotVerifiedException, aerr.Error())
+				log.Println(ses.ErrCodeMailFromDomainNotVerifiedException, aerr.Error())
 			case ses.ErrCodeConfigurationSetDoesNotExistException:
-				fmt.Println(ses.ErrCodeConfigurationSetDoesNotExistException, aerr.Error())
+				log.Println(ses.ErrCodeConfigurationSetDoesNotExistException, aerr.Error())
 			default:
-				fmt.Println(aerr.Error())
+				log.Println(aerr.Error())
 			}
 
 			err := &utils.AppError{
@@ -145,7 +149,7 @@ func (p *AWS_SES_SDKEMailServices) sendEMail(strSender string, toAddresses []*st
 		} else {
 			// Print the error, cast err to awserr.Error to get the Code and
 			// Message from an error.
-			fmt.Println(err.Error())
+			log.Println(err.Error())
 			err := &utils.AppError{
 				ErrorMsg: err.Error(),
 			}
@@ -153,8 +157,8 @@ func (p *AWS_SES_SDKEMailServices) sendEMail(strSender string, toAddresses []*st
 		}
 	}
 
-	fmt.Println("Email Sent")
-	fmt.Println(result)
+	log.Println("Email Sent")
+	log.Println(result)
 
 	return nil
 }

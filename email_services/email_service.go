@@ -154,16 +154,17 @@ func (p *EMailService) convertTemplateToHTML(templateFileName string, templateDa
 		return "", err
 	}
 
-	log.Println("SendEMailWithTemplate ParseFiles Success")
+	log.Println("convertTemplateToHTML ParseFiles Success")
 
 	buf := new(bytes.Buffer)
 	if err = t.Execute(buf, templateData); err != nil {
 		log.Println(err)
 		return "", err
 	}
-	log.Println("SendEMailWithTemplate Execute Success")
 
 	htmlBody := buf.String()
+
+	log.Println("convertTemplateToHTML Execute Success", htmlBody)
 
 	return htmlBody, nil
 }
