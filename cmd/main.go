@@ -10,12 +10,53 @@ import (
 )
 
 func main() {
-	emailConf := getAWSSESSDKConfig()
+
+	testAWS_SES_SMTP_Mail()
+
+}
+
+func testAWS_SES_SMTP_Mail() error {
+	emailConf := getAWSSES_SMTPConfig()
 
 	svcEmail, err := email_services.NewEMailService(emailConf)
 	if err != nil {
 		log.Println("Error: ", err)
-		return
+		return err
+	}
+
+	// Parse the Parameters
+	strSender := "no-reply@clm.zapscloud.com"
+	strRecipient := "karthikeyan.n@inforios.com"
+	strSubject := "This is test subject"
+	//strBody := "This is Test mail body"
+	arrToAddresses := []string{
+		strRecipient,
+	}
+	arrCCAddresses := []string{}
+	strTemplateName := "./cmd/business_signup.html"
+	mapTemplateData := utils.Map{
+		"business_name": "Test Business",
+		"email_id":      "abc@xyz.com",
+		"strBody":       "1234",
+	}
+
+	//err = svcEmail.SendEMail(strSender, strRecipient, strSubject, strBody)
+	err = svcEmail.SendEMail2WithTemplate(strSender, arrToAddresses, arrCCAddresses, strSubject, strTemplateName, mapTemplateData)
+	if err != nil {
+		log.Println("Error: ", err)
+		return err
+	}
+	return nil
+}
+
+func testAWS_SES_SDK_Mail() error {
+
+	emailConf := getAWSSES_SDKConfig()
+
+	svcEmail, err := email_services.NewEMailService(emailConf)
+	if err != nil {
+		log.Println("Error: ", err)
+		return err
 	}
 
 	// Parse the Parameters
@@ -35,9 +76,22 @@ func main() {
 	// Send to multiple EMail
 	svcEmail.SendEMail2(strSender, arrToAddresses, arrCCAddresses, strSubject, strBody)
 
+	return nil
 }
 
-func getAWSSESSDKConfig() utils.Map {
+func getAWSSES_SMTPConfig() utils.Map {
+	emailConf := utils.Map{
+		email_common.EMAIL_TYPE:                  email_common.EMAIL_TYPE_AWS_SES_SMTP,
+		email_common.EMAIL_AWS_SES_SMTP_HOST:     os.Getenv("AWS_SES_SMTP_HOST"),
+		email_common.EMAIL_AWS_SES_SMTP_PORT:     os.Getenv("AWS_SES_SMTP_PORT"),
+		email_common.EMAIL_AWS_SES_SMTP_USERNAME: os.Getenv("AWS_SES_SMTP_USERNAME"),
+		email_common.EMAIL_AWS_SES_SMTP_PASSWORD: os.Getenv("AWS_SES_SMTP_PASSWORD"),
+	}
+
+	return emailConf
+}
+
+func getAWSSES_SDKConfig() utils.Map {
 	emailConf := utils.Map{
 		email_common.EMAIL_TYPE:                  email_common.EMAIL_TYPE_AWS_SES_SDK,
 		email_common.EMAIL_AWS_SES_SDK_REGION:    os.Getenv("AWS_SES_SDK_REGION"),

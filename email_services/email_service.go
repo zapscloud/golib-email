@@ -40,11 +40,10 @@ func NewEMailService(props utils.Map) (EMailService, error) {
 	// Get the EMail's Object based on EMailType
 	switch emailType {
 	case email_common.EMAIL_TYPE_AWS_SES_SDK:
-		emailService.emailClient = &email_repository.AWS_SES_SDKEMailServices{}
+		emailService.emailClient = &email_repository.AWS_SES_SDKEmailServices{}
 
 	case email_common.EMAIL_TYPE_AWS_SES_SMTP:
-		// *Not Implemented yet*
-		emailService.emailClient = nil
+		emailService.emailClient = &email_repository.AWS_SES_SMTPEmailServices{}
 
 	case email_common.EMAIL_TYPE_MS_AZURE:
 		// *Not Implemented yet*

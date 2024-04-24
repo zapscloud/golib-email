@@ -17,10 +17,18 @@ const (
 const (
 	EMAIL_TYPE = "email_type"
 
-	// Param for AWS_S3
+	// Param for AWS_SES_SDK
 	EMAIL_AWS_SES_SDK_REGION    = "aws_ses_sdk_region"
 	EMAIL_AWS_SES_SDK_ACCESSKEY = "aws_ses_sdk_accesskey"
 	EMAIL_AWS_SES_SDK_SECRETKEY = "aws_ses_sdk_secretkey"
+)
+
+const (
+	// Params for AWS_SES_SMTP
+	EMAIL_AWS_SES_SMTP_HOST     = "aws_ses_smtp_host"
+	EMAIL_AWS_SES_SMTP_PORT     = "aws_ses_smtp_port"
+	EMAIL_AWS_SES_SMTP_USERNAME = "aws_ses_smtp_username"
+	EMAIL_AWS_SES_SMTP_PASSWORD = "aws_ses_smtp_password"
 )
 
 func GetEMailType(props utils.Map) (EMailType, error) {

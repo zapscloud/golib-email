@@ -13,13 +13,13 @@ import (
 )
 
 // AWSStorageServices - AWS Storage Service structure
-type AWS_SES_SDKEMailServices struct {
+type AWS_SES_SDKEmailServices struct {
 	awsSESSdkRegion    string
 	awsSESSdkAccessKey string
 	awsSESSdkSecretKey string
 }
 
-func (p *AWS_SES_SDKEMailServices) InitializeService(props utils.Map) error {
+func (p *AWS_SES_SDKEmailServices) InitializeService(props utils.Map) error {
 
 	var err error = nil
 
@@ -44,7 +44,7 @@ func (p *AWS_SES_SDKEMailServices) InitializeService(props utils.Map) error {
 }
 
 // Send EMail to Single Recipient
-func (p *AWS_SES_SDKEMailServices) SendEMail(strSender string, strRecipient string, strSubject string, strBody string) error {
+func (p *AWS_SES_SDKEmailServices) SendEMail(strSender string, strRecipient string, strSubject string, strBody string) error {
 
 	// Convert strReceipt as Array
 	toAddresses := []*string{
@@ -58,7 +58,7 @@ func (p *AWS_SES_SDKEMailServices) SendEMail(strSender string, strRecipient stri
 }
 
 // Send Email to Multiple Recipient
-func (p *AWS_SES_SDKEMailServices) SendEMail2(strSender string, arrRecipients []string, arrCCAddresses []string, strSubject string, strBody string) error {
+func (p *AWS_SES_SDKEmailServices) SendEMail2(strSender string, arrRecipients []string, arrCCAddresses []string, strSubject string, strBody string) error {
 
 	// Create the list of ToAddresses
 	var toAddresses []*string
@@ -76,7 +76,7 @@ func (p *AWS_SES_SDKEMailServices) SendEMail2(strSender string, arrRecipients []
 
 }
 
-func (p *AWS_SES_SDKEMailServices) sendEMail(strSender string, toAddresses []*string, ccAddresses []*string, strSubject string, strBody string) error {
+func (p *AWS_SES_SDKEmailServices) sendEMail(strSender string, toAddresses []*string, ccAddresses []*string, strSubject string, strBody string) error {
 
 	log.Println("SDKEMailServices.sendEMail Enter:", strSender, toAddresses, ccAddresses, strSubject)
 
