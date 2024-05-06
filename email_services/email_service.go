@@ -21,6 +21,7 @@ type reposEMailService interface {
 	InitializeService(props utils.Map) error
 	SendEMail(strSender string, strRecipient string, strSubject string, strBody string) error
 	SendEMail2(strSender string, arrRecipient []string, arrCCAddresses []string, strSubject string, strBody string) error
+	SendEMailWithAttachment(strSender string, arrRecipient []string, arrCCAddresses []string, strSubject string, strBody string, strAttachmentFile string) error
 }
 
 // NewEMailService - Contruct EMail Service
@@ -103,6 +104,23 @@ func (p *EMailService) SendEMail2(strSender string, strRecipient []string, strCC
 	return err
 }
 
+func (p *EMailService) SendEMailWithAttachment(
+	strSender string,
+	strRecipient []string, strCCAddresses []string,
+	strSubject string, strBody string,
+	strAttachment string) error {
+
+	var err error = nil
+
+	if p.emailClient == nil {
+		err = &utils.AppError{ErrorStatus: 412, ErrorMsg: "Initialize Error", ErrorDetail: "EMail Service is not created"}
+	} else {
+		err = p.emailClient.SendEMailWithAttachment(strSender, strRecipient, strCCAddresses, strSubject, strBody, strAttachment)
+	}
+
+	return err
+}
+
 func (p *EMailService) SendEMailWithTemplate(
 	strSender string,
 	strRecipient string,
@@ -136,6 +154,25 @@ func (p *EMailService) SendEMail2WithTemplate(
 	}
 
 	return p.SendEMail2(strSender, arrToAddresses, arrCCAddresses, strSubject, htmlBody)
+}
+
+func (p *EMailService) SendEMailWithTemplateAndAttachment(
+	strSender string,
+	arrToAddresses []string,
+	arrCCAddresses []string,
+	strSubject string,
+	templateFileName string,
+	templateData utils.Map,
+	strAttachment string) error {
+
+	log.Println("SendEMailWithTemplateAndAttachment Enter=> ", strSender, arrToAddresses, arrCCAddresses, strSubject, templateFileName, path.Base(templateFileName), strAttachment)
+
+	htmlBody, err := p.convertTemplateToHTML(templateFileName, templateData)
+	if err != nil {
+		return err
+	}
+
+	return p.SendEMailWithAttachment(strSender, arrToAddresses, arrCCAddresses, strSubject, htmlBody, strAttachment)
 }
 
 func (p *EMailService) convertTemplateToHTML(templateFileName string, templateData utils.Map) (string, error) {

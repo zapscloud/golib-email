@@ -76,6 +76,16 @@ func (p *AWS_SES_SDKEmailServices) SendEMail2(strSender string, arrRecipients []
 
 }
 
+func (p *AWS_SES_SDKEmailServices) SendEMailWithAttachment(
+	strSender string,
+	arrRecipient []string,
+	arrCCAddresses []string,
+	strSubject string,
+	strBody string,
+	strAttachmentFile string) error {
+	return p.SendEMail2(strSender, arrRecipient, arrCCAddresses, strSubject, strBody)
+}
+
 func (p *AWS_SES_SDKEmailServices) sendEMail(strSender string, toAddresses []*string, ccAddresses []*string, strSubject string, strBody string) error {
 
 	log.Println("SDKEMailServices.sendEMail Enter:", strSender, toAddresses, ccAddresses, strSubject)

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Your Salesflick Business</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+        #welcome-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #logo {
+            font-size: 72px;
+            color: #4285f4;
+            margin-bottom: 20px;
+        }
+        #message {
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+            max-width: 400px;
+            margin-bottom: 30px;
+        }
+        #account-info {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="welcome-container">
+        <div id="logo">ZapsClm</div>
+        <div id="message">Welcome to your Business! Here's your business information:</div>
+        <div id="account-info">
+            <p><strong>Business Name:</strong> {{ .business_name }}</p>
+            <p><strong>Email:</strong>{{.email_id}} </p>
+            <p class="otp-code">Your OTP Code: {{.strBody}}</p>
+            <p> Visit us at:<br>https://www.inforios.com/<br></p>
+        </div>
+    </div>
+</body>
+</html>

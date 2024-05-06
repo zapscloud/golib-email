@@ -27,10 +27,11 @@ func testAWS_SES_SMTP_Mail() error {
 	// Parse the Parameters
 	strSender := "no-reply@clm.zapscloud.com"
 	strRecipient := "karthikeyan.n@inforios.com"
-	strSubject := "This is test subject"
+	strSubject := "This is test Email with attachment"
 	//strBody := "This is Test mail body"
 	arrToAddresses := []string{
 		strRecipient,
+		"anburajan.inforios@gmail.com",
 	}
 	arrCCAddresses := []string{}
 	strTemplateName := "./cmd/business_signup.html"
@@ -40,8 +41,23 @@ func testAWS_SES_SMTP_Mail() error {
 		"strBody":       "1234",
 	}
 
+	// Send Test Email
 	//err = svcEmail.SendEMail(strSender, strRecipient, strSubject, strBody)
-	err = svcEmail.SendEMail2WithTemplate(strSender, arrToAddresses, arrCCAddresses, strSubject, strTemplateName, mapTemplateData)
+
+	// Send Test Email
+	// err = svcEmail.SendEMail2WithTemplate(
+	// 	strSender,
+	// 	arrToAddresses, arrCCAddresses,
+	// 	strSubject,
+	// 	strTemplateName, mapTemplateData)
+
+	// Send Test Email with Attachment
+	err = svcEmail.SendEMailWithTemplateAndAttachment(
+		strSender,
+		arrToAddresses, arrCCAddresses,
+		strSubject,
+		strTemplateName, mapTemplateData,
+		"./cmd/cat.jpg")
 	if err != nil {
 		log.Println("Error: ", err)
 		return err

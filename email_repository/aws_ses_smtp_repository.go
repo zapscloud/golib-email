@@ -2,7 +2,10 @@ package email_repository
 
 import (
 	"log"
-	"net/smtp"
+	"os"
+	"strconv"
+
+	gomail "gopkg.in/gomail.v2"
 
 	"github.com/zapscloud/golib-email/email_common"
 	"github.com/zapscloud/golib-utils/utils"
@@ -54,36 +57,89 @@ func (p *AWS_SES_SMTPEmailServices) SendEMail(strSender string, strRecipient str
 	// CC email address.
 	ccAddresses := []string{}
 
-	return p.sendEMail(strSender, toAddresses, ccAddresses, strSubject, strBody)
+	return p.sendEmailWithGomail(strSender, toAddresses, ccAddresses, strSubject, strBody, "")
 }
 
 // Send Email to Multiple Recipient
 func (p *AWS_SES_SMTPEmailServices) SendEMail2(strSender string, arrRecipients []string, arrCCAddresses []string, strSubject string, strBody string) error {
-	return p.sendEMail(strSender, arrRecipients, arrCCAddresses, strSubject, strBody)
+	return p.sendEmailWithGomail(strSender, arrRecipients, arrCCAddresses, strSubject, strBody, "")
 }
 
-func (p *AWS_SES_SMTPEmailServices) sendEMail(strSender string, toAddresses []string, ccAddresses []string, strSubject string, strBody string) error {
+func (p *AWS_SES_SMTPEmailServices) SendEMailWithAttachment(
+	strSender string,
+	arrRecipient []string,
+	arrCCAddresses []string,
+	strSubject string,
+	strBody string,
+	strAttachmentFile string) error {
 
-	log.Println("AWS_SES_SMTPEmailServices.sendEMail Enter:", strSender, toAddresses, ccAddresses, strSubject)
+	return p.sendEmailWithGomail(strSender, arrRecipient, arrCCAddresses, strSubject, strBody, strAttachmentFile)
+}
 
-	// Authentication.
-	auth := smtp.PlainAuth("", p.smtpUsername, p.smtpPassword, p.smtpHost)
+// func (p *AWS_SES_SMTPEmailServices) sendEMail(strSender string, toAddresses []string, ccAddresses []string, strSubject string, strBody string) error {
 
-	mimeHeaders := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
+// 	log.Println("AWS_SES_SMTPEmailServices.sendEMail Enter:", strSender, toAddresses, ccAddresses, strSubject)
 
-	// Message.
-	message := []byte(
-		"Subject: " + strSubject + "\r\n" + mimeHeaders + strBody + "\r\n")
+// 	// Authentication.
+// 	auth := smtp.PlainAuth("", p.smtpUsername, p.smtpPassword, p.smtpHost)
 
-	// Sending email.
-	err := smtp.SendMail(p.smtpHost+":"+p.smtpPort, auth, strSender, toAddresses, message)
+// 	mimeHeaders := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
+
+// 	// Message.
+// 	message := []byte(
+// 		"Subject: " + strSubject + "\r\n" + mimeHeaders + strBody + "\r\n")
+
+// 	// Sending email.
+// 	err := smtp.SendMail(p.smtpHost+":"+p.smtpPort, auth, strSender, toAddresses, message)
+// 	if err != nil {
+// 		log.Println(err)
+// 		return err
+// 	}
+
+// 	log.Println("Email Sent Successfully!")
+
+// 	return nil
+
+// }
+
+func (p *AWS_SES_SMTPEmailServices) sendEmailWithGomail(
+	strSender string,
+	toAddresses []string,
+	ccAddresses []string,
+	strSubject string,
+	strBody string,
+	strAttachment string) error {
+
+	msg := gomail.NewMessage()
+	msg.SetHeader("From", strSender)
+	msg.SetHeader("To", toAddresses...)
+	msg.SetHeader("Cc", ccAddresses...)
+	msg.SetHeader("Subject", strSubject)
+	msg.SetBody("text/html", strBody)
+
+	// Attachment
+	if !utils.IsEmpty(strAttachment) {
+		if _, err := os.Stat(strAttachment); err == nil {
+			msg.Attach(strAttachment)
+			log.Println("Attachment file found ", strAttachment)
+		} else {
+			log.Println("Attachment file **not found** ", strAttachment)
+		}
+	}
+
+	intPort, err := strconv.Atoi(p.smtpPort)
 	if err != nil {
-		log.Println(err)
+		return err
+	}
+
+	n := gomail.NewDialer(p.smtpHost, intPort, p.smtpUsername, p.smtpPassword)
+
+	// Send the email
+	if err := n.DialAndSend(msg); err != nil {
 		return err
 	}
 
 	log.Println("Email Sent Successfully!")
 
 	return nil
-
 }
